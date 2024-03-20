@@ -14,8 +14,6 @@ class DemoViewModel(
     val uiState = mutableStateOf (CurrencyListingState())
     fun getCurrencyList() {
         viewModelScope.launch {
-            uiState.value = uiState.value.copy(currencies = testingData)
-            delay(5000L)
             val list = currencyDataSource.getCurrencyList()
             uiState.value = uiState.value.copy(currencies = list)
         }

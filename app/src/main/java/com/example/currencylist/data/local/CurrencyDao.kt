@@ -19,8 +19,8 @@ interface CurrencyDao {
 //            "symbol LIKE :symbol LIMIT 1")
 //    fun findByName(name: String, symbol: String): CurrencyDto
 
-//    @Insert
-//    suspend fun insertAll(vararg currencies: CurrencyDto)
+    @Insert
+    suspend fun insertCurrency(vararg currencies: CurrencyDto)
 //
 //    @Delete
 //    suspend fun delete(currencies: CurrencyDto)
