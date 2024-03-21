@@ -1,7 +1,8 @@
 package com.example.currencylist.data.local
 
 import com.example.currencylist.domain.Currency
+import kotlinx.coroutines.flow.Flow
 
 interface CurrencyDataSource {
-    suspend fun getCurrencyList(): List<Currency>
+    fun getCurrencyList(): Flow<List<Currency>>
 }

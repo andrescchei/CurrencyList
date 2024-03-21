@@ -5,21 +5,44 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.data.local.CurrencyDataSource
 import com.example.currencylist.domain.Currency
+import com.example.currencylist.domain.CurrencyType
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class DemoViewModel(
     private val currencyDataSource: CurrencyDataSource
 ): ViewModel() {
     val uiState = mutableStateOf (CurrencyListingState())
-    fun getCurrencyList() {
+
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
+    private fun getCurrencyList() {
         viewModelScope.launch {
-            val list = currencyDataSource.getCurrencyList()
-            uiState.value = uiState.value.copy(currencies = list)
+            currencyDataSource.getCurrencyList().collect {
+                uiState.value = uiState.value.copy(currencies = it.toImmutableList())
+            }
         }
     }
     init {
         getCurrencyList()
+    }
+
+    fun onEvent(event: DemoEvent) {
+        when(event) {
+            is DemoEvent.onClickNavigation -> selectCurrencyTypes(event.selectedCurrencyTypes)
+            is DemoEvent.onClearDb -> TODO()
+            is DemoEvent.onInsertDB -> TODO()
+        }
+    }
+    private fun selectCurrencyTypes(currencyTypes: ImmutableSet<CurrencyType>) {
+        uiState.value = uiState.value.copy(selectedCurrencyTypes = currencyTypes)
     }
 }
 

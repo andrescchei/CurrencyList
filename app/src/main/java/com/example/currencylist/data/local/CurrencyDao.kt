@@ -5,12 +5,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.currencylist.data.entities.CurrencyDto
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface CurrencyDao {
     @Query("SELECT * FROM currencydto")
-    suspend fun getAll(): List<CurrencyDto>
+    fun getAll(): Flow<List<CurrencyDto>>
 
 //    @Query("SELECT * FROM currencydto WHERE id IN (:currencyIds)")
 //    suspend fun loadAllByIds(currencyIds: IntArray): List<CurrencyDto>
