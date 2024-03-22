@@ -1,11 +1,15 @@
 package com.example.currencylist
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.data.local.CurrencyDataSource
 import com.example.currencylist.domain.Currency
 import com.example.currencylist.domain.CurrencyType
+import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
+import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
+import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
@@ -16,7 +20,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class DemoViewModel(
-    private val currencyDataSource: CurrencyDataSource
+    private val insertCurrencyDataBaseUseCase: InsertCurrencyDataBaseUseCase,
+    private val deleteCurrencyDataBaseUseCase: DeleteCurrencyDataBaseUseCase
 ): ViewModel() {
     val uiState = mutableStateOf (CurrencyListingState())
 
@@ -25,9 +30,9 @@ class DemoViewModel(
 
     private fun getCurrencyList() {
         viewModelScope.launch {
-            currencyDataSource.getCurrencyList().collect {
-                uiState.value = uiState.value.copy(currencies = it.toImmutableList())
-            }
+//            currencyDataSource.getCurrencyListStream().collect {
+//                uiState.value = uiState.value.copy(currencies = it.toImmutableList())
+//            }
         }
     }
     init {
@@ -37,12 +42,44 @@ class DemoViewModel(
     fun onEvent(event: DemoEvent) {
         when(event) {
             is DemoEvent.onClickNavigation -> selectCurrencyTypes(event.selectedCurrencyTypes)
-            is DemoEvent.onClearDb -> TODO()
-            is DemoEvent.onInsertDB -> TODO()
+            is DemoEvent.onClearDb -> deleteDB()
+            is DemoEvent.onInsertDB -> insertDB()
         }
     }
     private fun selectCurrencyTypes(currencyTypes: ImmutableSet<CurrencyType>) {
         uiState.value = uiState.value.copy(selectedCurrencyTypes = currencyTypes)
+    }
+
+    private fun insertDB() {
+        viewModelScope.launch {
+            when(val result = insertCurrencyDataBaseUseCase.populateCurrencyDataBase()) {
+                is Result.Success -> Log.i("DemoViewModel", "insertDB success")
+                is Result.Error ->
+                    when(val error = result.error) {
+                        InsertCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat,
+                        InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound-> Log.e("DemoModel", error.toString())
+                        is InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
+                    }
+            }
+        }
+    }
+
+    private fun deleteDB() {
+        viewModelScope.launch {
+            when(val result = deleteCurrencyDataBaseUseCase.deleteCurrencyDataBase()) {
+                is Result.Success -> Log.i("DemoViewModel", "deleteDB success")
+                is Result.Error ->
+                    when(val error = result.error) {
+                        is DeleteCurrencyDataBaseUseCase.DeleteDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
+                    }
+            }
+        }
+    }
+
+    private fun clearDB() {
+        viewModelScope.launch {
+
+        }
     }
 }
 

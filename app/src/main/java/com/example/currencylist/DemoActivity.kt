@@ -56,10 +56,12 @@ fun Demo(navController: NavController, viewModel: DemoViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {  }) {
+        Button(onClick = {
+            viewModel.onEvent(DemoEvent.onClearDb)
+        }) {
             Text(text = "Clear DB")
         }
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { viewModel.onEvent(DemoEvent.onInsertDB) }) {
             Text(text = "Insert DB")
         }
         CurrencyType.entries.forEach {

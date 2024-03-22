@@ -21,15 +21,12 @@ abstract class CurrencyDatabase: RoomDatabase() {
                         context,
                         CurrencyDatabase::class.java,
                         "currency-db"
-                    )
-                        .addCallback(PrepopulateRoomCallback(context))
-                        .build()
+                    ).build()
                     instance = DB_INSTANCE
                 }
 
                 return instance!!
             }
-
         }
 
     }

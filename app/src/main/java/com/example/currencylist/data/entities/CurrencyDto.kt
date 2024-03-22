@@ -9,5 +9,6 @@ data class CurrencyDto(
     val id: String,
     val name: String,
     val symbol: String,
+    val type: String,
     val code: String?
 )
