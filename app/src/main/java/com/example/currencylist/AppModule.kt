@@ -9,6 +9,8 @@ import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCaseImpl
 import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
 import com.example.currencylist.domain.InsertCurrencyDataBaseUseCaseImpl
+import com.example.currencylist.domain.SearchCurrencyUseCase
+import com.example.currencylist.domain.SearchCurrencyUseCaseImpl
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -29,9 +31,13 @@ val appModule = module {
 
     factory<InsertCurrencyDataBaseUseCase>{InsertCurrencyDataBaseUseCaseImpl(applicationContext = androidContext().applicationContext, get())}
     factory<DeleteCurrencyDataBaseUseCase>{DeleteCurrencyDataBaseUseCaseImpl(get())}
+    factory<SearchCurrencyUseCase>{ SearchCurrencyUseCaseImpl(get()) }
 
 
     viewModel {
         DemoViewModel(get(), get())
+    }
+    viewModel {
+        CurrencyListingViewModel(get())
     }
 }

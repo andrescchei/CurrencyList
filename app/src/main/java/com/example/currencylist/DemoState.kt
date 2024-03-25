@@ -7,8 +7,7 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
-data class CurrencyListingState(
-    val currencies: ImmutableList<Currency> = persistentListOf(),
+data class DemoState(
     val selectedCurrencyTypes: ImmutableSet<CurrencyType> = persistentSetOf()
 )
 

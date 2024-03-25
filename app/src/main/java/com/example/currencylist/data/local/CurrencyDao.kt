@@ -22,9 +22,10 @@ interface CurrencyDao {
 //            "symbol LIKE :symbol LIMIT 1")
 //    fun findByName(name: String, symbol: String): CurrencyDto
     @Query("SELECT * FROM currencydto WHERE " +
+            "(name LIKE '%' || ' ' || :keyword || '%' OR " +
             "name LIKE :keyword || '%'  OR " +
-            "name LIKE '%' || ' ' || :keyword || '%' OR " +
-            "symbol LIKE :keyword || '%' AND " +
+            "symbol LIKE :keyword || '%' OR " +
+            "code LIKE :keyword || '%' ) AND " +
             "type IN(:currencyTypes)")
     suspend fun searchByKeywordAndType(keyword: String, currencyTypes: List<String>): List<CurrencyDto>
 

@@ -45,11 +45,7 @@ class DemoActivity : AppCompatActivity() {
             CurrencyListTheme {
                 NavHost(navController = navController, startDestination = "demo") {
                     composable("demo") { Demo(navController, viewModel::onEvent) }
-                    composable(
-                        "currencyList",
-                        arguments = listOf(navArgument(CURRENCY_TYPE_KEY) {
-                            type = NavType.StringArrayType
-                        }))
+                    composable("currencyList")
                         {
                             FragmentInCompose(navController, viewModel.uiState.value.selectedCurrencyTypes)
                         }
@@ -104,8 +100,11 @@ fun FragmentInCompose(navController: NavHostController, types: Set<CurrencyType>
         },
         update = {
             Log.i("AndroidBindingView", "fragment onUpdate")
-//            fragmentContainerView.getFragment<CurrencyListingFragment>().arguments = bundle
-            fragmentContainerView.getFragment<CurrencyListingFragment>()
+            fragmentContainerView.getFragment<CurrencyListingFragment>().onInitiate(
+                types
+            ) {
+                navController.navigateUp()
+            }
         }
     )
 }

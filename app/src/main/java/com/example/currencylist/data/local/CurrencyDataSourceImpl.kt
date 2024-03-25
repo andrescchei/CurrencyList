@@ -18,7 +18,7 @@ class CurrencyDataSourceImpl(private val currencyDao: CurrencyDao): CurrencyData
 
     override suspend fun getCurrencyList(currencyTypes: Set<CurrencyType>): List<Currency> {
         if (currencyTypes.isNotEmpty()) {
-            return currencyDao.getListByType(currencyTypes.map { it.name }).map {
+            return currencyDao.getListByType(currencyTypes.map { it.name.lowercase() }).map {
                 it.toCurrency()
             }
         } else {
@@ -30,7 +30,7 @@ class CurrencyDataSourceImpl(private val currencyDao: CurrencyDao): CurrencyData
         searchText: String,
         currencyTypes: Set<CurrencyType>
     ): List<Currency> {
-        return currencyDao.searchByKeywordAndType(searchText, currencyTypes.map{ it.name }).map {
+        return currencyDao.searchByKeywordAndType(searchText, currencyTypes.map{ it.name.lowercase() }).map {
             it.toCurrency()
         }
     }
