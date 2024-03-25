@@ -1,8 +1,10 @@
 package com.example.currencylist
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,21 +16,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.currencylist.databinding.FragmentContainerViewBinding
 import com.example.currencylist.domain.Currency
 import com.example.currencylist.domain.CurrencyType
+import com.example.currencylist.ui.CurrencyListingFragment
+import com.example.currencylist.ui.CurrencyListingFragment.Companion.CURRENCY_TYPE_KEY
 import com.example.currencylist.ui.theme.CurrencyListTheme
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DemoActivity : ComponentActivity() {
+class DemoActivity : AppCompatActivity() {
     val viewModel: DemoViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,12 +44,15 @@ class DemoActivity : ComponentActivity() {
             val navController = rememberNavController()
             CurrencyListTheme {
                 NavHost(navController = navController, startDestination = "demo") {
-                    composable("demo") { Demo(navController, viewModel) }
+                    composable("demo") { Demo(navController, viewModel::onEvent) }
                     composable(
-                        "currencyList"
-                    ) {
-                        CurrencyList(navController, viewModel.uiState.value.selectedCurrencyTypes)
-                    }
+                        "currencyList",
+                        arguments = listOf(navArgument(CURRENCY_TYPE_KEY) {
+                            type = NavType.StringArrayType
+                        }))
+                        {
+                            FragmentInCompose(navController, viewModel.uiState.value.selectedCurrencyTypes)
+                        }
                     // Add more destinations similarly.
                 }
             }
@@ -50,30 +61,30 @@ class DemoActivity : ComponentActivity() {
 }
 
 @Composable
-fun Demo(navController: NavController, viewModel: DemoViewModel) {
+fun Demo(navController: NavController, onEvent: (DemoEvent) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            viewModel.onEvent(DemoEvent.onClearDb)
+            onEvent(DemoEvent.onClearDb)
         }) {
             Text(text = "Clear DB")
         }
-        Button(onClick = { viewModel.onEvent(DemoEvent.onInsertDB) }) {
+        Button(onClick = { onEvent(DemoEvent.onInsertDB) }) {
             Text(text = "Insert DB")
         }
         CurrencyType.entries.forEach {
             Button(onClick = {
-                viewModel.onEvent(DemoEvent.onClickNavigation(persistentSetOf(it)))
+                onEvent(DemoEvent.onClickNavigation(persistentSetOf(it)))
                 navController.navigate("currencyList")
             }) {
                 Text(text = it.name)
             }
         }
         Button(onClick = {
-            viewModel.onEvent(DemoEvent.onClickNavigation(CurrencyType.entries.toImmutableSet()))
+            onEvent(DemoEvent.onClickNavigation(CurrencyType.entries.toImmutableSet()))
             navController.navigate("currencyList")
         }) {
             Text(text = "All")
@@ -82,8 +93,21 @@ fun Demo(navController: NavController, viewModel: DemoViewModel) {
 }
 
 @Composable
-fun CurrencyList(navController: NavHostController, types: Set<CurrencyType>) {
-    Text(types.toString())
+fun FragmentInCompose(navController: NavHostController, types: Set<CurrencyType>) {
+    AndroidViewBinding(
+        FragmentContainerViewBinding::inflate,
+        onReset = {
+
+        },
+        onRelease = {
+            Log.i("AndroidViewBinding", "release FragmentContainerViewBinding")
+        },
+        update = {
+            Log.i("AndroidBindingView", "fragment onUpdate")
+//            fragmentContainerView.getFragment<CurrencyListingFragment>().arguments = bundle
+            fragmentContainerView.getFragment<CurrencyListingFragment>()
+        }
+    )
 }
 
 @Preview(showBackground = true)
