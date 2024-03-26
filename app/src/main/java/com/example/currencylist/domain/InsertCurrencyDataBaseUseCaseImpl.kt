@@ -4,22 +4,15 @@ import android.content.Context
 import android.content.res.Resources
 import com.example.currencylist.R
 import com.example.currencylist.data.local.CurrencyDataSource
+import com.example.currencylist.data.local.LocalJSONDataSource
 import org.json.JSONArray
 import org.json.JSONException
 
-class InsertCurrencyDataBaseUseCaseImpl(val applicationContext: Context, val currencyDS: CurrencyDataSource): InsertCurrencyDataBaseUseCase {
+class InsertCurrencyDataBaseUseCaseImpl(val currencyDS: CurrencyDataSource, val localJSONDS: LocalJSONDataSource): InsertCurrencyDataBaseUseCase {
     override suspend fun populateCurrencyDataBase(): Result<Unit, InsertCurrencyDataBaseUseCase.PopulateDBError> {
         try {
-            //TODO should extract to LocalJSONDataSource
-            val fiatList: JSONArray =
-                applicationContext.resources.openRawResource(R.raw.fiat).bufferedReader().use {
-                    JSONArray(it.readText())
-                }
-            //TODO should extract to LocalJSONDataSource
-            val cryptoList: JSONArray =
-                applicationContext.resources.openRawResource(R.raw.crypto).bufferedReader().use {
-                    JSONArray(it.readText())
-                }
+            val fiatList: JSONArray = localJSONDS.getJSONArrayFromLocalJSONFile(R.raw.fiat)
+            val cryptoList: JSONArray = localJSONDS.getJSONArrayFromLocalJSONFile(R.raw.crypto)
 
             fiatList.takeIf { it.length() > 0 }?.let { list ->
                 for (index in 0 until list.length()) {

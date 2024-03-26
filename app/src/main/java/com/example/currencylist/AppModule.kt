@@ -5,6 +5,8 @@ import com.example.currencylist.data.local.CurrencyDao
 import com.example.currencylist.data.local.CurrencyDataSource
 import com.example.currencylist.data.local.CurrencyDataSourceImpl
 import com.example.currencylist.data.local.CurrencyDatabase
+import com.example.currencylist.data.local.LocalJSONDataSource
+import com.example.currencylist.data.local.LocalJSONDataSourceImpl
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCaseImpl
 import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
@@ -28,8 +30,11 @@ val appModule = module {
     single<CurrencyDataSource> {
         CurrencyDataSourceImpl(get())
     }
+    single<LocalJSONDataSource>{
+        LocalJSONDataSourceImpl(androidApplication().applicationContext)
+    }
 
-    factory<InsertCurrencyDataBaseUseCase>{InsertCurrencyDataBaseUseCaseImpl(applicationContext = androidContext().applicationContext, get())}
+    factory<InsertCurrencyDataBaseUseCase>{InsertCurrencyDataBaseUseCaseImpl(get(), get())}
     factory<DeleteCurrencyDataBaseUseCase>{DeleteCurrencyDataBaseUseCaseImpl(get())}
     factory<SearchCurrencyUseCase>{ SearchCurrencyUseCaseImpl(get()) }
 
