@@ -40,6 +40,7 @@ class DemoViewModel(
                         is InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
                     }
             }
+            Log.i("Coroutine" , "insertDB completed")
         }
     }
 
