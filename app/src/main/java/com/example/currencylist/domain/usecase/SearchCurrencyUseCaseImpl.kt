@@ -1,6 +1,10 @@
-package com.example.currencylist.domain
+package com.example.currencylist.domain.usecase
 
 import com.example.currencylist.data.local.CurrencyDataSource
+import com.example.currencylist.domain.Currency
+import com.example.currencylist.domain.CurrencyType
+import com.example.currencylist.domain.Result
+import com.example.currencylist.domain.toCurrency
 import kotlin.coroutines.cancellation.CancellationException
 
 class SearchCurrencyUseCaseImpl(val currencyDS: CurrencyDataSource): SearchCurrencyUseCase {
@@ -14,7 +18,11 @@ class SearchCurrencyUseCaseImpl(val currencyDS: CurrencyDataSource): SearchCurre
             Result.Success(result.map { it.toCurrency() })
         } catch (e: Exception) {
             if (e is CancellationException) throw e
-            Result.Error(SearchCurrencyUseCase.SearchCurrencyError.Unknown(e.localizedMessage ?: "No message"))
+            Result.Error(
+                SearchCurrencyUseCase.SearchCurrencyError.Unknown(
+                    e.localizedMessage ?: "No message"
+                )
+            )
         }
     }
 }

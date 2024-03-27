@@ -1,4 +1,4 @@
-package com.example.currencylist
+package com.example.currencylist.presentation.viewModel
 
 import com.example.currencylist.domain.Currency
 import com.example.currencylist.domain.CurrencyType

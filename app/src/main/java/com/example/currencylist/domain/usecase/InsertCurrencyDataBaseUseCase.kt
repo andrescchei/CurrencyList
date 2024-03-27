@@ -1,4 +1,7 @@
-package com.example.currencylist.domain
+package com.example.currencylist.domain.usecase
+
+import com.example.currencylist.domain.Error
+import com.example.currencylist.domain.Result
 
 interface InsertCurrencyDataBaseUseCase {
     suspend fun populateCurrencyDataBase(): Result<Unit, PopulateDBError>

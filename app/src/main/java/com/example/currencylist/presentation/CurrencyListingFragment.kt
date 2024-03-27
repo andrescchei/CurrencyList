@@ -1,4 +1,4 @@
-package com.example.currencylist.ui
+package com.example.currencylist.presentation
 
 import android.os.Bundle
 import android.util.Log
@@ -19,15 +19,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.currencylist.CurrencyListingEvent
-import com.example.currencylist.CurrencyListingState
-import com.example.currencylist.CurrencyListingViewModel
+import com.example.currencylist.presentation.viewModel.CurrencyListingEvent
+import com.example.currencylist.presentation.viewModel.CurrencyListingState
+import com.example.currencylist.presentation.viewModel.CurrencyListingViewModel
 import com.example.currencylist.domain.Currency
 import com.example.currencylist.domain.CurrencyType
 import com.example.currencylist.ui.theme.CurrencyListTheme
@@ -116,7 +115,8 @@ class CurrencyListingFragment: Fragment() {
     }
 
     fun onInitiate(types: Set<CurrencyType>, onBackPress: () -> Unit) {
-        viewModel.onEvent(CurrencyListingEvent.OnInitial(
+        viewModel.onEvent(
+            CurrencyListingEvent.OnInitial(
             types, onBackPress
         ))
     }

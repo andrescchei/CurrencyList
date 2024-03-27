@@ -1,11 +1,11 @@
-package com.example.currencylist
+package com.example.currencylist.presentation.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.domain.CurrencyType
-import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
-import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
+import com.example.currencylist.domain.usecase.DeleteCurrencyDataBaseUseCase
+import com.example.currencylist.domain.usecase.InsertCurrencyDataBaseUseCase
 import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.Dispatchers
