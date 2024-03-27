@@ -5,10 +5,11 @@ import android.util.Log
 import com.example.currencylist.R
 import com.example.currencylist.data.local.CurrencyDataSource
 import com.example.currencylist.data.local.LocalJSONDataSource
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ import org.json.JSONException
 class InsertCurrencyDataBaseUseCaseImpl(val currencyDS: CurrencyDataSource, val localJSONDS: LocalJSONDataSource): InsertCurrencyDataBaseUseCase {
     override suspend fun populateCurrencyDataBase(): Result<Unit, InsertCurrencyDataBaseUseCase.PopulateDBError> {
         try {
-            val scope = CoroutineScope(Job() + Dispatchers.IO)
+            val scope = CoroutineScope(Dispatchers.IO)
             val job1 = scope.launch {
                 val fiatList: JSONArray = localJSONDS.getJSONArrayFromLocalJSONFile(R.raw.fiat)
                 fiatList.takeIf { it.length() > 0 }?.let { list ->
@@ -30,7 +31,7 @@ class InsertCurrencyDataBaseUseCaseImpl(val currencyDS: CurrencyDataSource, val 
                         val symbol = currencyObj.getString("symbol")
                         val code = currencyObj.getString("code")
                         currencyDS.insertCurrencyDataBase(
-                            Currency.Fiat(id, name, symbol, code)
+                            Currency.Fiat(id, name, symbol, code).toCurrencyDto()
                         )
                         Log.i("Coroutine" , "job1 running $name")
                     }
@@ -48,7 +49,7 @@ class InsertCurrencyDataBaseUseCaseImpl(val currencyDS: CurrencyDataSource, val 
                         val name = currencyObj.getString("name")
                         val symbol = currencyObj.getString("symbol")
                         currencyDS.insertCurrencyDataBase(
-                            Currency.Crypto(id, name, symbol)
+                            Currency.Crypto(id, name, symbol).toCurrencyDto()
                         )
                         Log.i("Coroutine" , "job2 running $name")
                     }
@@ -58,6 +59,7 @@ class InsertCurrencyDataBaseUseCaseImpl(val currencyDS: CurrencyDataSource, val 
             return Result.Success(listOf(job1,job2).joinAll())
         } catch (e: Exception) {
             return when(e) {
+                is CancellationException -> throw e
                 is JSONException -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat)
                 is Resources.NotFoundException -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound)
                 else -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown(e.localizedMessage ?: "No error message"))

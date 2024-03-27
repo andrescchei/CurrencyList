@@ -2,73 +2,33 @@ package com.example.currencylist.data.local
 
 
 import com.example.currencylist.data.entities.CurrencyDto
-import com.example.currencylist.domain.Currency
-import com.example.currencylist.domain.CurrencyType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class CurrencyDataSourceImpl(private val currencyDao: CurrencyDao): CurrencyDataSource {
-    override fun getCurrencyListStream(): Flow<List<Currency>> {
-        return currencyDao.getAllStream().map { currencies ->
-            return@map currencies.map {
-                it.toCurrency()
-            }
-        }
+    override fun getCurrencyListStream(): Flow<List<CurrencyDto>> {
+        return currencyDao.getAllStream()
     }
 
-    override suspend fun getCurrencyList(currencyTypes: Set<CurrencyType>): List<Currency> {
+    override suspend fun getCurrencyList(currencyTypes: Set<String>): List<CurrencyDto> {
         if (currencyTypes.isNotEmpty()) {
-            return currencyDao.getListByType(currencyTypes.map { it.name.lowercase() }).map {
-                it.toCurrency()
-            }
+            return currencyDao.getListByType(currencyTypes.map { it.lowercase() })
         } else {
-            return currencyDao.getAllList().map { it.toCurrency() }
+            return currencyDao.getAllList()
         }
     }
 
     override suspend fun searchCurrencyList(
         searchText: String,
-        currencyTypes: Set<CurrencyType>
-    ): List<Currency> {
-        return currencyDao.searchByKeywordAndType(searchText, currencyTypes.map{ it.name.lowercase() }).map {
-            it.toCurrency()
-        }
+        currencyTypes: Set<String>
+    ): List<CurrencyDto> {
+        return currencyDao.searchByKeywordAndType(searchText, currencyTypes.map{ it.lowercase() })
     }
 
-    override suspend fun insertCurrencyDataBase(currency: Currency) {
-        return currencyDao.insertCurrency(currency.toCurrencyDto())
+    override suspend fun insertCurrencyDataBase(currency: CurrencyDto) {
+        return currencyDao.insertCurrency(currency)
     }
 
     override suspend fun deleteCurrencyDataBase() {
         return currencyDao.deleteAll()
     }
-}
-
-fun CurrencyDto.toCurrency(): Currency {
-    return when {
-        type == "fiat" && !code.isNullOrBlank() -> Currency.Fiat(
-            id = id,
-            name = name,
-            symbol = symbol,
-            code = code
-        )
-        type == "crypto" -> Currency.Crypto(
-            id = id,
-            name = name,
-            symbol = symbol,
-        )
-        else -> throw Exception("parsing error")
-    }
-}
-
-fun Currency.toCurrencyDto(): CurrencyDto {
-    return when(this) {
-        is Currency.Fiat -> CurrencyDto(
-            id, name, symbol, type = "fiat", code
-        )
-        is Currency.Crypto -> CurrencyDto(
-            id, name, symbol, type = "crypto", null
-        )
-    }
-
 }

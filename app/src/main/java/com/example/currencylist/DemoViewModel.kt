@@ -1,7 +1,6 @@
 package com.example.currencylist
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.domain.CurrencyType
@@ -10,23 +9,30 @@ import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
 import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DemoViewModel(
     private val insertCurrencyDataBaseUseCase: InsertCurrencyDataBaseUseCase,
     private val deleteCurrencyDataBaseUseCase: DeleteCurrencyDataBaseUseCase
 ): ViewModel() {
-    val uiState = mutableStateOf (DemoState())
+
+    private val _uiState = MutableStateFlow(DemoState())
+    val uiState: StateFlow<DemoState> = _uiState
 
     fun onEvent(event: DemoEvent) {
         when(event) {
-            is DemoEvent.onClickNavigation -> selectCurrencyTypes(event.selectedCurrencyTypes)
-            is DemoEvent.onClearDb -> deleteDB()
-            is DemoEvent.onInsertDB -> insertDB()
+            is DemoEvent.OnClickNavigation -> selectCurrencyTypes(event.selectedCurrencyTypes)
+            is DemoEvent.OnClearDb -> deleteDB()
+            is DemoEvent.OnInsertDB -> insertDB()
         }
     }
     private fun selectCurrencyTypes(currencyTypes: ImmutableSet<CurrencyType>) {
-        uiState.value = uiState.value.copy(selectedCurrencyTypes = currencyTypes)
+        _uiState.update {
+            it.copy(selectedCurrencyTypes = currencyTypes)
+        }
     }
 
     private fun insertDB() {

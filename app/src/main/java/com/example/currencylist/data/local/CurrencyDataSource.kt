@@ -6,9 +6,9 @@ import com.example.currencylist.domain.CurrencyType
 import kotlinx.coroutines.flow.Flow
 
 interface CurrencyDataSource {
-    fun getCurrencyListStream(): Flow<List<Currency>>
-    suspend fun getCurrencyList(currencyTypes: Set<CurrencyType>): List<Currency>
-    suspend fun searchCurrencyList(searchText: String, currencyTypes: Set<CurrencyType>): List<Currency>
-    suspend fun insertCurrencyDataBase(currency: Currency): Unit
+    fun getCurrencyListStream(): Flow<List<CurrencyDto>>
+    suspend fun getCurrencyList(currencyTypes: Set<String>): List<CurrencyDto>
+    suspend fun searchCurrencyList(searchText: String, currencyTypes: Set<String>): List<CurrencyDto>
+    suspend fun insertCurrencyDataBase(currency: CurrencyDto): Unit
     suspend fun deleteCurrencyDataBase(): Unit
 }

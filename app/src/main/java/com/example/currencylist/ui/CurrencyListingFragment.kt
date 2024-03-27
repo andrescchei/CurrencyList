@@ -19,10 +19,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.currencylist.CurrencyListingEvent
 import com.example.currencylist.CurrencyListingState
 import com.example.currencylist.CurrencyListingViewModel
@@ -42,8 +44,9 @@ class CurrencyListingFragment: Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
+                val uiState = viewModel.uiState.collectAsStateWithLifecycle()
                 CurrencyListTheme {
-                    CurrencyListing(viewModel.uiState.value, viewModel::onEvent)
+                    CurrencyListing(uiState.value, viewModel::onEvent)
                 }
             }
         }

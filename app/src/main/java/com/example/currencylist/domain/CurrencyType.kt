@@ -1,5 +1,5 @@
 package com.example.currencylist.domain
 
-enum class CurrencyType {
-    FIAT, CRYPTO
+enum class CurrencyType(val stringKey: String) {
+    FIAT("fiat"), CRYPTO("crypto")
 }
