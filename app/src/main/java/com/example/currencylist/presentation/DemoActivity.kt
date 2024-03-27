@@ -20,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.currencylist.databinding.FragmentContainerViewBinding
 import com.example.currencylist.domain.CurrencyType
+import com.example.currencylist.presentation.components.Demo
+import com.example.currencylist.presentation.components.FragmentInCompose
 import com.example.currencylist.presentation.viewModel.DemoEvent
 import com.example.currencylist.presentation.viewModel.DemoViewModel
 import com.example.currencylist.ui.theme.CurrencyListTheme
@@ -52,58 +54,7 @@ class DemoActivity : AppCompatActivity() {
     }
 }
 
-@Composable
-fun Demo(onEvent: (DemoEvent) -> Unit, onNavigate: (NavDestinations) -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(onClick = {
-            onEvent(DemoEvent.OnClearDb)
-        }) {
-            Text(text = "Clear DB")
-        }
-        Button(onClick = { onEvent(DemoEvent.OnInsertDB) }) {
-            Text(text = "Insert DB")
-        }
-        CurrencyType.entries.forEach {
-            Button(onClick = {
-                onEvent(DemoEvent.OnClickNavigation(persistentSetOf(it)))
-                onNavigate(NavDestinations.CURRENCY_LIST)
-            }) {
-                Text(text = it.name)
-            }
-        }
-        Button(onClick = {
-            onEvent(DemoEvent.OnClickNavigation(CurrencyType.entries.toImmutableSet()))
-            onNavigate(NavDestinations.CURRENCY_LIST)
-        }) {
-            Text(text = "All")
-        }
-    }
-}
 
-@Composable
-fun FragmentInCompose(onNavigateUp: () -> Unit, types: Set<CurrencyType>) {
-    AndroidViewBinding(
-        FragmentContainerViewBinding::inflate,
-        onReset = {
-
-        },
-        onRelease = {
-            Log.i("AndroidViewBinding", "release FragmentContainerViewBinding")
-        },
-        update = {
-            Log.i("AndroidBindingView", "fragment onUpdate")
-            fragmentContainerView.getFragment<CurrencyListingFragment>().onInitiate(
-                types
-            ) {
-                onNavigateUp()
-            }
-        }
-    )
-}
 
 @Preview(showBackground = true)
 @Composable

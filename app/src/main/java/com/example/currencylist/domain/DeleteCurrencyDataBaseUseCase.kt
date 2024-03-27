@@ -1,7 +1,4 @@
-package com.example.currencylist.domain.usecase
-
-import com.example.currencylist.domain.Error
-import com.example.currencylist.domain.Result
+package com.example.currencylist.domain
 
 interface DeleteCurrencyDataBaseUseCase {
     suspend fun deleteCurrencyDataBase(): Result<Unit, DeleteDBError>

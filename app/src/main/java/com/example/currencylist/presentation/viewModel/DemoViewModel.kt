@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.domain.CurrencyType
-import com.example.currencylist.domain.usecase.DeleteCurrencyDataBaseUseCase
-import com.example.currencylist.domain.usecase.InsertCurrencyDataBaseUseCase
+import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
+import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
 import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +42,8 @@ class DemoViewModel(
                 is Result.Error ->
                     when(val error = result.error) {
                         InsertCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat,
-                        InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound-> Log.e("DemoModel", error.toString())
+                        InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound,
+                        InsertCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException -> Log.e("DemoModel", error.toString())
                         is InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
                     }
             }

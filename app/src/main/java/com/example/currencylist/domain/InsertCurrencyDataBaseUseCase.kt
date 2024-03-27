@@ -1,7 +1,4 @@
-package com.example.currencylist.domain.usecase
-
-import com.example.currencylist.domain.Error
-import com.example.currencylist.domain.Result
+package com.example.currencylist.domain
 
 interface InsertCurrencyDataBaseUseCase {
     suspend fun populateCurrencyDataBase(): Result<Unit, PopulateDBError>
@@ -9,6 +6,7 @@ interface InsertCurrencyDataBaseUseCase {
     sealed interface PopulateDBError: Error {
         data object InvalidDataFormat: PopulateDBError
         data object SourceNotFound: PopulateDBError
+        data object SQLiteConstraintException: PopulateDBError
         data class Unknown(val errorMessage: String): PopulateDBError
     }
 }

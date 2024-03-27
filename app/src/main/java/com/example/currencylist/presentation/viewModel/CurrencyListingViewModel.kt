@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.domain.Result
-import com.example.currencylist.domain.usecase.SearchCurrencyUseCase
+import com.example.currencylist.domain.SearchCurrencyUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.Dispatchers
