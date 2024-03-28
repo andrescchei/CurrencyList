@@ -11,8 +11,9 @@ composeBom = "2023.08.00"
 roomVersion = "2.6.1"
 koin-android-version = "3.6.0-wasm-alpha2"
 ksp-version = "1.9.0-1.0.13"
-kotlinx = "0.3.7"
+collectionsImmutableVersion = "0.3.7"
 navigationCompose = "2.7.7"
+coroutinesTest = "1.8.0"
 
 
 [libraries]
@@ -36,9 +37,9 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android-version" }
-kotlinx-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinx"}
+kotlinx-collections = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "collectionsImmutableVersion" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

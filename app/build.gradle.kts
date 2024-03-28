@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.currencylist"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -77,4 +77,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.koin.android)
     implementation(libs.kotlinx.collections)
+    implementation(libs.kotlinx.coroutines.test)
 }
