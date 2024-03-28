@@ -1,32 +1,19 @@
 package com.example.currencylist.presentation
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.currencylist.databinding.FragmentContainerViewBinding
-import com.example.currencylist.domain.CurrencyType
 import com.example.currencylist.presentation.components.Demo
 import com.example.currencylist.presentation.components.FragmentInCompose
-import com.example.currencylist.presentation.viewModel.DemoEvent
 import com.example.currencylist.presentation.viewModel.DemoViewModel
 import com.example.currencylist.ui.theme.CurrencyListTheme
-import kotlinx.collections.immutable.persistentSetOf
-import kotlinx.collections.immutable.toImmutableSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DemoActivity : AppCompatActivity() {
@@ -36,6 +23,10 @@ class DemoActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+            if(uiState.value.toastMessage != null) {
+                Toast.makeText(this, uiState.value.toastMessage, Toast.LENGTH_SHORT).show()
+                viewModel.onToasted()
+            }
             CurrencyListTheme {
                 NavHost(navController = navController, startDestination = NavDestinations.DEMO.route) {
                     composable(NavDestinations.DEMO.route) {

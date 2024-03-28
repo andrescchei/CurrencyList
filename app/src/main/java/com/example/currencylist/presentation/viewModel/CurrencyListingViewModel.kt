@@ -37,16 +37,12 @@ class CurrencyListingViewModel(val searchCurrencyUseCase: SearchCurrencyUseCase)
                 _uiState.update {
                     it.copy(searchText = event.searchText)
                 }
-                viewModelScope.launch(Dispatchers.IO){
-                    cancelAndReassignJob(search())
-                }
+                cancelAndReassignJob(search())
             }
             is CurrencyListingEvent.OnSearchCancel -> {
                 Log.i("CurrencyListingViewModel", "OnSearchCancel")
-                viewModelScope.launch(Dispatchers.IO) {
-                    job?.cancel()
-                    job = null
-                }
+                job?.cancel()
+                job = null
             }
             is CurrencyListingEvent.OnClearText -> {
                 onEvent(CurrencyListingEvent.OnSearch(""))

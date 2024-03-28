@@ -5,7 +5,8 @@ import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.persistentSetOf
 
 data class DemoState(
-    val selectedCurrencyTypes: ImmutableSet<CurrencyType> = persistentSetOf()
+    val selectedCurrencyTypes: ImmutableSet<CurrencyType> = persistentSetOf(),
+    val toastMessage: String? = null
 )
 
 sealed interface DemoEvent {

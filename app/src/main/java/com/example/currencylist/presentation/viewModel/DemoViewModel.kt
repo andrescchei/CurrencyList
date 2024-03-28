@@ -9,6 +9,8 @@ import com.example.currencylist.domain.PopulateCurrencyDataBaseUseCase
 import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -22,11 +24,12 @@ class DemoViewModel(
     private val _uiState = MutableStateFlow(DemoState())
     val uiState: StateFlow<DemoState> = _uiState
 
+    private var job: Job? = null
     fun onEvent(event: DemoEvent) {
         when(event) {
             is DemoEvent.OnClickNavigation -> selectCurrencyTypes(event.selectedCurrencyTypes)
-            is DemoEvent.OnClearDb -> deleteDB()
-            is DemoEvent.OnInsertDB -> insertDB()
+            is DemoEvent.OnClearDb -> cancelAndReassignJob(deleteDB())
+            is DemoEvent.OnInsertDB -> cancelAndReassignJob(insertDB())
         }
     }
     private fun selectCurrencyTypes(currencyTypes: ImmutableSet<CurrencyType>) {
@@ -35,38 +38,47 @@ class DemoViewModel(
         }
     }
 
-    private fun insertDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            when(val result = populateCurrencyDataBaseUseCase.invoke()) {
-                is Result.Success -> Log.i("DemoViewModel", "insertDB success")
+    private fun insertDB(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
+            delay(500L)
+            onFinishIO(when(val result = populateCurrencyDataBaseUseCase.invoke()) {
+                is Result.Success -> "Insert DB Success"
                 is Result.Error ->
                     when(val error = result.error) {
                         PopulateCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat,
                         PopulateCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound,
-                        PopulateCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException -> Log.e("DemoModel", error.toString())
-                        is PopulateCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
+                        PopulateCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException -> error.toString()
+                        is PopulateCurrencyDataBaseUseCase.PopulateDBError.Unknown -> error.errorMessage
                     }
-            }
-            Log.i("Coroutine" , "insertDB completed")
+            })
         }
     }
 
-    private fun deleteDB() {
-        viewModelScope.launch(Dispatchers.IO) {
-            when(val result = deleteCurrencyDataBaseUseCase.invoke()) {
-                is Result.Success -> Log.i("DemoViewModel", "deleteDB success")
+    private fun deleteDB(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
+            delay(500L)
+            onFinishIO(when(val result = deleteCurrencyDataBaseUseCase.invoke()) {
+                is Result.Success -> "Delete DB Success"
                 is Result.Error ->
                     when(val error = result.error) {
-                        is DeleteCurrencyDataBaseUseCase.DeleteDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
+                        is DeleteCurrencyDataBaseUseCase.DeleteDBError.Unknown -> error.errorMessage
                     }
-            }
+            })
         }
     }
-}
 
-//val testingData = listOf(
-//    Currency.Fiat("HKD", "HKD", "HKD", "HKD"),
-//    Currency.Fiat("GBP", "GBP", "GBP", "GBP"),
-//    Currency.Fiat("USD", "USD", "USD", "USD"),
-//    Currency.Crypto("BTC", "Bitcoin", "BTC"),
-//)
+    private fun onFinishIO(message: String){
+        _uiState.update { it.copy(toastMessage = message) }
+    }
+
+    //expose給view call的function
+    fun onToasted(){
+        _uiState.update { it.copy(toastMessage = null) }
+    }
+
+    @Synchronized
+    private fun cancelAndReassignJob(newJob: Job) {
+        job?.cancel()
+        job = newJob
+    }
+}
