@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.currencylist.domain.CurrencyType
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
-import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
+import com.example.currencylist.domain.PopulateCurrencyDataBaseUseCase
 import com.example.currencylist.domain.Result
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DemoViewModel(
-    private val insertCurrencyDataBaseUseCase: InsertCurrencyDataBaseUseCase,
+    private val populateCurrencyDataBaseUseCase: PopulateCurrencyDataBaseUseCase,
     private val deleteCurrencyDataBaseUseCase: DeleteCurrencyDataBaseUseCase
 ): ViewModel() {
 
@@ -37,14 +37,14 @@ class DemoViewModel(
 
     private fun insertDB() {
         viewModelScope.launch(Dispatchers.IO) {
-            when(val result = insertCurrencyDataBaseUseCase.populateCurrencyDataBase()) {
+            when(val result = populateCurrencyDataBaseUseCase.invoke()) {
                 is Result.Success -> Log.i("DemoViewModel", "insertDB success")
                 is Result.Error ->
                     when(val error = result.error) {
-                        InsertCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat,
-                        InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound,
-                        InsertCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException -> Log.e("DemoModel", error.toString())
-                        is InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
+                        PopulateCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat,
+                        PopulateCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound,
+                        PopulateCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException -> Log.e("DemoModel", error.toString())
+                        is PopulateCurrencyDataBaseUseCase.PopulateDBError.Unknown -> Log.e("DemoModel", error.errorMessage)
                     }
             }
             Log.i("Coroutine" , "insertDB completed")
@@ -53,7 +53,7 @@ class DemoViewModel(
 
     private fun deleteDB() {
         viewModelScope.launch(Dispatchers.IO) {
-            when(val result = deleteCurrencyDataBaseUseCase.deleteCurrencyDataBase()) {
+            when(val result = deleteCurrencyDataBaseUseCase.invoke()) {
                 is Result.Success -> Log.i("DemoViewModel", "deleteDB success")
                 is Result.Error ->
                     when(val error = result.error) {

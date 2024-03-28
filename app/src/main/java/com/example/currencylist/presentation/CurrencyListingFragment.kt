@@ -55,7 +55,7 @@ import com.example.currencylist.ui.theme.CurrencyListTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrencyListingFragment: Fragment() {
-    val viewModel: CurrencyListingViewModel by viewModel()
+    private val viewModel: CurrencyListingViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

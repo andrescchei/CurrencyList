@@ -8,8 +8,8 @@ import com.example.currencylist.data.local.LocalJSONDataSource
 import com.example.currencylist.data.local.LocalJSONDataSourceImpl
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCase
 import com.example.currencylist.domain.DeleteCurrencyDataBaseUseCaseImpl
-import com.example.currencylist.domain.InsertCurrencyDataBaseUseCase
-import com.example.currencylist.domain.InsertCurrencyDataBaseUseCaseImpl
+import com.example.currencylist.domain.PopulateCurrencyDataBaseUseCase
+import com.example.currencylist.domain.PopulateCurrencyDataBaseUseCaseImpl
 import com.example.currencylist.domain.SearchCurrencyUseCase
 import com.example.currencylist.domain.SearchCurrencyUseCaseImpl
 import com.example.currencylist.presentation.viewModel.CurrencyListingViewModel
@@ -33,7 +33,7 @@ val appModule = module {
         LocalJSONDataSourceImpl(androidApplication().applicationContext)
     }
 
-    factory<InsertCurrencyDataBaseUseCase>{ InsertCurrencyDataBaseUseCaseImpl(get(), get()) }
+    factory<PopulateCurrencyDataBaseUseCase>{ PopulateCurrencyDataBaseUseCaseImpl(get(), get()) }
     factory<DeleteCurrencyDataBaseUseCase>{ DeleteCurrencyDataBaseUseCaseImpl(get()) }
     factory<SearchCurrencyUseCase>{ SearchCurrencyUseCaseImpl(get()) }
 

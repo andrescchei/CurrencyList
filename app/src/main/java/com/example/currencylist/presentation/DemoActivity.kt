@@ -30,7 +30,7 @@ import kotlinx.collections.immutable.toImmutableSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DemoActivity : AppCompatActivity() {
-    val viewModel: DemoViewModel by viewModel()
+    private val viewModel: DemoViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

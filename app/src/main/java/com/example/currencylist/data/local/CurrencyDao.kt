@@ -18,9 +18,6 @@ interface CurrencyDao {
     @Query("SELECT * FROM currencydto WHERE type IN(:currencyTypes)")
     suspend fun getListByType(currencyTypes: List<String>): List<CurrencyDto>
 
-//    @Query("SELECT * FROM currencyDto WHERE name LIKE :name AND " +
-//            "symbol LIKE :symbol LIMIT 1")
-//    fun findByName(name: String, symbol: String): CurrencyDto
     @Query("SELECT * FROM currencydto WHERE " +
             "(name LIKE '%' || ' ' || :keyword || '%' OR " +
             "name LIKE :keyword || '%'  OR " +
@@ -31,7 +28,7 @@ interface CurrencyDao {
 
     @Insert
     suspend fun insertCurrency(vararg currencies: CurrencyDto)
-//
+
     @Delete
     suspend fun delete(currencies: CurrencyDto)
 

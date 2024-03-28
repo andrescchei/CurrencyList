@@ -1,7 +1,7 @@
 package com.example.currencylist.domain
 
-interface InsertCurrencyDataBaseUseCase {
-    suspend fun populateCurrencyDataBase(): Result<Unit, PopulateDBError>
+interface PopulateCurrencyDataBaseUseCase {
+    suspend fun invoke(): Result<Unit, PopulateDBError>
 
     sealed interface PopulateDBError: Error {
         data object InvalidDataFormat: PopulateDBError

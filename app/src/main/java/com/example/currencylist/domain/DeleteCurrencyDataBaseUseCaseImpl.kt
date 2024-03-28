@@ -5,7 +5,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class DeleteCurrencyDataBaseUseCaseImpl(private val currencyDS: CurrencyDataSource):
     DeleteCurrencyDataBaseUseCase {
-    override suspend fun deleteCurrencyDataBase(): Result<Unit, DeleteCurrencyDataBaseUseCase.DeleteDBError> = try {
+    override suspend fun invoke(): Result<Unit, DeleteCurrencyDataBaseUseCase.DeleteDBError> = try {
         currencyDS.deleteCurrencyDataBase()
         Result.Success(Unit)
     } catch (e: Exception) {

@@ -7,23 +7,17 @@ import com.example.currencylist.R
 import com.example.currencylist.data.local.CurrencyDataSource
 import com.example.currencylist.data.local.LocalJSONDataSource
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
-import kotlin.coroutines.CoroutineContext
 
-class InsertCurrencyDataBaseUseCaseImpl(private val currencyDS: CurrencyDataSource, private val localJSONDS: LocalJSONDataSource):
-    InsertCurrencyDataBaseUseCase {
-    override suspend fun populateCurrencyDataBase(): Result<Unit, InsertCurrencyDataBaseUseCase.PopulateDBError> = try {
+class PopulateCurrencyDataBaseUseCaseImpl(private val currencyDS: CurrencyDataSource, private val localJSONDS: LocalJSONDataSource):
+    PopulateCurrencyDataBaseUseCase {
+    override suspend fun invoke(): Result<Unit, PopulateCurrencyDataBaseUseCase.PopulateDBError> = try {
         withContext(Dispatchers.IO) {
                 val job1 = launch {
                     val fiatList: JSONArray = localJSONDS.getJSONArrayFromLocalJSONFile(R.raw.fiat)
@@ -66,11 +60,11 @@ class InsertCurrencyDataBaseUseCaseImpl(private val currencyDS: CurrencyDataSour
     } catch (e: Exception) {
         when(e) {
             is CancellationException -> throw e
-            is SQLiteConstraintException -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException)
-            is JSONException -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat)
-            is Resources.NotFoundException -> Result.Error(InsertCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound)
+            is SQLiteConstraintException -> Result.Error(PopulateCurrencyDataBaseUseCase.PopulateDBError.SQLiteConstraintException)
+            is JSONException -> Result.Error(PopulateCurrencyDataBaseUseCase.PopulateDBError.InvalidDataFormat)
+            is Resources.NotFoundException -> Result.Error(PopulateCurrencyDataBaseUseCase.PopulateDBError.SourceNotFound)
             else -> Result.Error(
-                InsertCurrencyDataBaseUseCase.PopulateDBError.Unknown(
+                PopulateCurrencyDataBaseUseCase.PopulateDBError.Unknown(
                     e.localizedMessage ?: "No error message"
                 )
             )
